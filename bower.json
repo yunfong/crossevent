@@ -1,0 +1,26 @@
+{
+  "name": "crossevent",
+  "version": "0.0.1",
+  "homepage": "https://github.com/yunfound/crossevent",
+  "description": "a JQuery plugin for compatible MouseEvent and ToutchEvent",
+  "main": "jquery.crossevent.js",
+  "moduleType": [
+    "amd"
+  ],
+  "keywords": [
+    "jquery",
+    "event",
+    "crossevent"
+  ],
+  "authors": [
+    "Yunfong(gaoomei@gmail.com)"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
