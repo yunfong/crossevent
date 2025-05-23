@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CrossEvent Test</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        .test-box {
+            width: 200px;
+            height: 100px;
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            user-select: none; /* Prevent text selection from interfering with clicks/taps */
+        }
+        #tapClickArea { background-color: #e0f7fa; }
+        #mouseEventArea { background-color: #ffe0b2; }
+        #log { margin-top: 20px; border-top: 1px solid #eee; padding-top: 10px; font-family: monospace; }
+        .log-entry { margin-bottom: 5px; }
+        .log-entry.touch { color: blue; }
+        .log-entry.mouse { color: green; }
+        .log-entry.tapclick { color: purple; }
+    </style>
+    <!-- Include the compiled library -->
+    <script src="../dist/crossevent.js"></script>
+</head>
+<body>
+    <h1>CrossEvent Test Page</h1>
+
+    <p>Open your browser's developer console to see detailed event logs.</p>
+
+    <div id="tapClickArea" class="test-box">
+        Test onTapClick here
+    </div>
+
+    <div id="mouseEventArea" class="test-box">
+        Test mousedown/mouseup (and touchstart/touchend via normalization) here
+    </div>
+
+    <div id="log">
+        <strong>Event Log:</strong><br>
+    </div>
+
+    <script>
+        const tapClickArea = document.getElementById('tapClickArea');
+        const mouseEventArea = document.getElementById('mouseEventArea');
+        const logElement = document.getElementById('log');
+
+        function logEvent(message, type) {
+            console.log(message, type || '');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry ' + (type || '');
+            entry.textContent = new Date().toLocaleTimeString() + ': ' + message;
+            logElement.appendChild(entry);
+            // Keep log short
+            if (logElement.children.length > 20) {
+                logElement.removeChild(logElement.firstChild);
+            }
+        }
+
+        // Test onTapClick
+        if (tapClickArea) {
+            CrossEvent.onTapClick(tapClickArea, (event) => {
+                let eventType = event.type;
+                if (event instanceof TouchEvent) {
+                    eventType = 'TouchEvent (' + event.type + ')';
+                } else if (event instanceof MouseEvent) {
+                    eventType = 'MouseEvent (' + event.type + (event.isTouch ? ' from touch' : '') + ')';
+                }
+                logEvent('onTapClick triggered! Event: ' + eventType, 'tapclick');
+            });
+            logEvent('onTapClick listener attached to blue area.');
+        } else {
+            logEvent('Error: tapClickArea not found.');
+        }
+
+        // Test standard mouse event listeners (should also work with touch)
+        if (mouseEventArea) {
+            mouseEventArea.addEventListener('mousedown', (event) => {
+                const type = event.isTouch ? 'touch' : 'mouse';
+                logEvent('mousedown listener triggered. isTouch: ' + !!event.isTouch + '. Original type: ' + event.type, type);
+            });
+            mouseEventArea.addEventListener('mousemove', (event) => {
+                // Limit logging for mousemove
+                if (Math.random() < 0.1) { // Log ~10% of mousemove events
+                    const type = event.isTouch ? 'touch' : 'mouse';
+                    logEvent('mousemove listener triggered. isTouch: ' + !!event.isTouch, type);
+                }
+            });
+            mouseEventArea.addEventListener('mouseup', (event) => {
+                const type = event.isTouch ? 'touch' : 'mouse';
+                logEvent('mouseup listener triggered. isTouch: ' + !!event.isTouch + '. Original type: ' + event.type, type);
+            });
+            logEvent('Standard mousedown/mousemove/mouseup listeners attached to orange area.');
+        } else {
+            logEvent('Error: mouseEventArea not found.');
+        }
+        
+        // Check if CrossEvent is available
+        if (typeof CrossEvent !== 'undefined' && CrossEvent.onTapClick) {
+            logEvent('CrossEvent library loaded and onTapClick is available.');
+        } else if (typeof onTapClick === 'function') {
+            // If dist/crossevent.js makes onTapClick a global function directly (e.g. UMD build)
+            logEvent('onTapClick function is available globally.');
+             // Re-assign for the test logic if it's global and not on a CrossEvent object
+            window.CrossEvent = { onTapClick: onTapClick }; // Ensure the test script works
+        } else {
+            logEvent('Error: CrossEvent library or onTapClick function not found. Check script path and UMD bundling if applicable.', 'error');
+            alert("CRITICAL: CrossEvent library not loaded. Check console and script path for dist/crossevent.js");
+        }
+
+    </script>
+</body>
+</html>

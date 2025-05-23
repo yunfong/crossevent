@@ -1,23 +1,37 @@
 {
   "name": "crossevent",
   "version": "0.0.1",
-  "description": "a JQuery plugin for compatible MouseEvent and ToutchEvent",
-  "main": "jquery.crossevent.js",
+  "description": "A lightweight, dependency-free library for normalizing mouse and touch events, written in TypeScript.",
+  "main": "dist/crossevent.js",
+  "types": "dist/crossevent.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx -p typescript tsc"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/yunfound/crossevent"
   },
   "keywords": [
-    "jquery",
-    "event"
+    "typescript",
+    "touch",
+    "mouse",
+    "event",
+    "event-normalization",
+    "native-api"
   ],
   "author": "Yunfong (gaoomei@gmail.com)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/yunfound/crossevent/issues"
   },
-  "homepage": "https://github.com/yunfound/crossevent"
+  "homepage": "https://github.com/yunfound/crossevent",
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  },
+  "files": [
+    "dist",
+    "README.MD",
+    "src"
+  ]
 }
